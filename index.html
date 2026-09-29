@@ -270,33 +270,141 @@
 
 
 
-<script>
+<!-- Firebase -->
 
-    /*
-     * ตัวอย่างบัญชีชั่วคราว
-     *
-     * ตอนนี้ยังไม่ได้เชื่อมฐานข้อมูล
-     * ข้อมูลจะหายเมื่อรีเฟรชหน้าเว็บ
-     */
+<script type="module">
 
-    let users = [];
+    import {
+        initializeApp
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+
+    import {
+        getAuth,
+        createUserWithEmailAndPassword,
+        signInWithEmailAndPassword,
+        onAuthStateChanged,
+        signOut
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
 
     // -------------------------
-    // เปลี่ยนไปหน้า Register
+    // Firebase Config
+    // -------------------------
+
+    const firebaseConfig = {
+
+        apiKey: "AIzaSyBnXa3xAHIfIKLlYku8gH9nl8CXZ6I3QzA",
+
+        authDomain: "sw-photo-finder.firebaseapp.com",
+
+        projectId: "sw-photo-finder",
+
+        storageBucket: "sw-photo-finder.firebasestorage.app",
+
+        messagingSenderId: "247908189079",
+
+        appId: "1:247908189079:web:a8db298bad5c43cf717ad2",
+
+        measurementId: "G-RZJ44RSQXS"
+
+    };
+
+
+    const app = initializeApp(firebaseConfig);
+
+    const auth = getAuth(app);
+
+
+
+    // -------------------------
+    // แปลง Username เป็น Email
+    // -------------------------
+
+    function usernameToEmail(username) {
+
+        return username.toLowerCase()
+            + "@swphotofinder.local";
+
+    }
+
+
+
+    // -------------------------
+    // แสดง Login
+    // -------------------------
+
+    function showLogin() {
+
+        document
+            .getElementById("loginPage")
+            .classList.remove("hidden");
+
+        document
+            .getElementById("registerPage")
+            .classList.add("hidden");
+
+        document
+            .getElementById("mainPage")
+            .classList.add("hidden");
+
+    }
+
+
+
+    // -------------------------
+    // แสดง Register
+    // -------------------------
+
+    function showRegister() {
+
+        document
+            .getElementById("loginPage")
+            .classList.add("hidden");
+
+        document
+            .getElementById("registerPage")
+            .classList.remove("hidden");
+
+        document
+            .getElementById("mainPage")
+            .classList.add("hidden");
+
+    }
+
+
+
+    // -------------------------
+    // แสดง Main
+    // -------------------------
+
+    function showMain() {
+
+        document
+            .getElementById("loginPage")
+            .classList.add("hidden");
+
+        document
+            .getElementById("registerPage")
+            .classList.add("hidden");
+
+        document
+            .getElementById("mainPage")
+            .classList.remove("hidden");
+
+    }
+
+
+
+    // -------------------------
+    // ไป Register
     // -------------------------
 
     document
         .getElementById("goRegister")
         .addEventListener("click", function () {
 
-            document
-                .getElementById("loginPage")
-                .classList.add("hidden");
-
-            document
-                .getElementById("registerPage")
-                .classList.remove("hidden");
+            showRegister();
 
             document
                 .getElementById("loginMessage")
@@ -307,20 +415,14 @@
 
 
     // -------------------------
-    // กลับไปหน้า Login
+    // กลับ Login
     // -------------------------
 
     document
         .getElementById("goLogin")
         .addEventListener("click", function () {
 
-            document
-                .getElementById("registerPage")
-                .classList.add("hidden");
-
-            document
-                .getElementById("loginPage")
-                .classList.remove("hidden");
+            showLogin();
 
             document
                 .getElementById("registerMessage")
@@ -336,7 +438,7 @@
 
     document
         .getElementById("registerButton")
-        .addEventListener("click", function () {
+        .addEventListener("click", async function () {
 
             const username =
                 document
@@ -365,14 +467,17 @@
             message.className = "message";
 
 
-            if (username === "" ||
+            if (
+                username === "" ||
                 password === "" ||
-                confirmPassword === "") {
+                confirmPassword === ""
+            ) {
 
                 message.textContent =
                     "กรุณากรอกข้อมูลให้ครบ";
 
                 return;
+
             }
 
 
@@ -382,6 +487,27 @@
                     "ชื่อผู้ใช้ต้องมีอย่างน้อย 3 ตัวอักษร";
 
                 return;
+
+            }
+
+
+            if (username.length > 30) {
+
+                message.textContent =
+                    "ชื่อผู้ใช้ยาวเกินไป";
+
+                return;
+
+            }
+
+
+            if (!/^[a-zA-Z0-9._-]+$/.test(username)) {
+
+                message.textContent =
+                    "ชื่อผู้ใช้ใช้ได้เฉพาะ A-Z, a-z, 0-9, . _ -";
+
+                return;
+
             }
 
 
@@ -391,6 +517,7 @@
                     "รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร";
 
                 return;
+
             }
 
 
@@ -400,54 +527,66 @@
                     "รหัสผ่านไม่ตรงกัน";
 
                 return;
+
             }
 
 
-            const exists =
-                users.some(function (user) {
-
-                    return user.username === username;
-
-                });
+            const email =
+                usernameToEmail(username);
 
 
-            if (exists) {
+            try {
+
+                await createUserWithEmailAndPassword(
+                    auth,
+                    email,
+                    password
+                );
+
+
+                message.className =
+                    "message success";
+
 
                 message.textContent =
-                    "ชื่อผู้ใช้นี้มีอยู่แล้ว";
+                    "สมัครสมาชิกสำเร็จ 🎉";
 
-                return;
+
+                document
+                    .getElementById("registerUsername")
+                    .value = "";
+
+                document
+                    .getElementById("registerPassword")
+                    .value = "";
+
+                document
+                    .getElementById("registerConfirm")
+                    .value = "";
+
+
+            } catch (error) {
+
+                console.error(error);
+
+
+                if (
+                    error.code ===
+                    "auth/email-already-in-use"
+                ) {
+
+                    message.textContent =
+                        "ชื่อผู้ใช้นี้มีอยู่แล้ว";
+
+                } else {
+
+                    message.textContent =
+                        "สมัครสมาชิกไม่สำเร็จ: "
+                        + error.message;
+
+                }
+
             }
-
-
-            users.push({
-
-                username: username,
-
-                password: password
-
-            });
-
-
-            message.className =
-                "message success";
-
-
-            message.textContent =
-                "สมัครสมาชิกสำเร็จ 🎉";
-
-
-            document
-                .getElementById("registerUsername")
-                .value = "";
-
-            document
-                .getElementById("registerPassword")
-                .value = "";
-
-            document
-                .getElementById("registerConfirm")
-                .value = "";
 
         });
 
@@ -459,7 +598,7 @@
 
     document
         .getElementById("loginButton")
-        .addEventListener("click", function () {
+        .addEventListener("click", async function () {
 
             const username =
                 document
@@ -483,43 +622,66 @@
                 "message";
 
 
-            const user =
-                users.find(function (user) {
+            if (
+                username === "" ||
+                password === ""
+            ) {
 
-                    return user.username === username &&
-                           user.password === password;
+                message.textContent =
+                    "กรุณากรอกชื่อผู้ใช้และรหัสผ่าน";
 
-                });
+                return;
+
+            }
 
 
-            if (!user) {
+            const email =
+                usernameToEmail(username);
+
+
+            try {
+
+                await signInWithEmailAndPassword(
+                    auth,
+                    email,
+                    password
+                );
+
+
+                message.textContent = "";
+
+
+            } catch (error) {
+
+                console.error(error);
+
 
                 message.textContent =
                     "ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง";
 
-                return;
             }
 
-
-            document
-                .getElementById("loginPage")
-                .classList.add("hidden");
-
-
-            document
-                .getElementById("mainPage")
-                .classList.remove("hidden");
-
-
-            document
-                .getElementById("loginUsername")
-                .value = "";
-
-            document
-                .getElementById("loginPassword")
-                .value = "";
-
         });
+
+
+
+    // -------------------------
+    // ตรวจสอบสถานะ Login
+    // -------------------------
+
+    onAuthStateChanged(auth, function (user) {
+
+        if (user) {
+
+            showMain();
+
+        } else {
+
+            showLogin();
+
+        }
+
+    });
 
 
 
@@ -549,6 +711,7 @@
                     "<p>กรุณาพิมพ์ชื่อกิจกรรม</p>";
 
                 return;
+
             }
 
 
@@ -567,16 +730,9 @@
 
     document
         .getElementById("logoutButton")
-        .addEventListener("click", function () {
+        .addEventListener("click", async function () {
 
-            document
-                .getElementById("mainPage")
-                .classList.add("hidden");
-
-
-            document
-                .getElementById("loginPage")
-                .classList.remove("hidden");
+            await signOut(auth);
 
         });
 

@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>SW Photo Finder</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f6f8;
+            color: #222;
+        }
+
+        .container {
+            max-width: 450px;
+            margin: auto;
+            padding: 25px;
+        }
+
+        .box {
+            background: white;
+            padding: 25px;
+            border-radius: 18px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            margin-top: 40px;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 25px;
+        }
+
+        input {
+            width: 100%;
+            padding: 13px;
+            margin-bottom: 12px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            font-size: 16px;
+        }
+
+        button {
+            width: 100%;
+            padding: 13px;
+            border: none;
+            border-radius: 10px;
+            background: #222;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            opacity: 0.9;
+        }
+
+        .secondary {
+            background: #777;
+            margin-top: 10px;
+        }
+
+        .link {
+            text-align: center;
+            margin-top: 18px;
+            color: #3367d6;
+            cursor: pointer;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        #message {
+            text-align: center;
+            margin-top: 15px;
+            color: #d33;
+        }
+
+        .search-box {
+            margin-top: 25px;
+        }
+
+        .logout {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <!-- LOGIN -->
+    <div id="loginPage" class="box">
+
+        <h1>🏫 SW Photo Finder</h1>
+
+        <p class="subtitle">
+            เข้าสู่ระบบเพื่อค้นหารูปกิจกรรม
+        </p>
+
+        <input
+            type="text"
+            id="loginUsername"
+            placeholder="ชื่อผู้ใช้"
+            autocomplete="username"
+        >
+
+        <input
+            type="password"
+            id="loginPassword"
+            placeholder="รหัสผ่าน"
+            autocomplete="current-password"
+        >
+
+        <button onclick="login()">
+            🔐 เข้าสู่ระบบ
+        </button>
+
+        <p class="link" onclick="showRegister()">
+            ยังไม่มีบัญชี? สมัครสมาชิก
+        </p>
+
+    </div>
+
+
+    <!-- REGISTER -->
+    <div id="registerPage" class="box hidden">
+
+        <h1>📝 สมัครสมาชิก</h1>
+
+        <p class="subtitle">
+            สร้างบัญชี SW Photo Finder
+        </p>
+
+        <input
+            type="text"
+            id="registerUsername"
+            placeholder="ชื่อผู้ใช้"
+            autocomplete="username"
+        >
+
+        <input
+            type="password"
+            id="registerPassword"
+            placeholder="รหัสผ่าน"
+            autocomplete="new-password"
+        >
+
+        <input
+            type="password"
+            id="registerConfirm"
+            placeholder="ยืนยันรหัสผ่าน"
+            autocomplete="new-password"
+        >
+
+        <button onclick="register()">
+            📝 สมัครสมาชิก
+        </button>
+
+        <button class="secondary" onclick="showLogin()">
+            กลับไปเข้าสู่ระบบ
+        </button>
+
+    </div>
+
+
+    <!-- MAIN -->
+    <div id="mainPage" class="box hidden">
+
+        <h1>🏫 SW Photo Finder</h1>
+
+        <

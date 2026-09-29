@@ -69,6 +69,10 @@
             transform: scale(0.98);
         }
 
+        button:disabled {
+            opacity: 0.6;
+        }
+
         .secondary {
             background: #777;
             margin-top: 10px;
@@ -110,7 +114,6 @@
 
 <body>
 
-
 <div class="container">
 
 
@@ -124,14 +127,12 @@
             เข้าสู่ระบบเพื่อค้นหารูปกิจกรรม
         </p>
 
-
         <input
             type="text"
             id="loginUsername"
             placeholder="ชื่อผู้ใช้"
             autocomplete="username"
         >
-
 
         <input
             type="password"
@@ -140,24 +141,15 @@
             autocomplete="current-password"
         >
 
-
         <button id="loginButton">
             🔐 เข้าสู่ระบบ
         </button>
 
-
-        <p
-            class="link"
-            id="goRegister"
-        >
+        <p class="link" id="goRegister">
             ยังไม่มีบัญชี? สมัครสมาชิก
         </p>
 
-
-        <p
-            id="loginMessage"
-            class="message"
-        ></p>
+        <p id="loginMessage" class="message"></p>
 
     </div>
 
@@ -165,17 +157,13 @@
 
     <!-- REGISTER -->
 
-    <div
-        id="registerPage"
-        class="box hidden"
-    >
+    <div id="registerPage" class="box hidden">
 
         <h1>📝 สมัครสมาชิก</h1>
 
         <p class="subtitle">
             สร้างบัญชี SW Photo Finder
         </p>
-
 
         <input
             type="text"
@@ -184,14 +172,12 @@
             autocomplete="username"
         >
 
-
         <input
             type="password"
             id="registerPassword"
             placeholder="รหัสผ่าน"
             autocomplete="new-password"
         >
-
 
         <input
             type="password"
@@ -200,11 +186,9 @@
             autocomplete="new-password"
         >
 
-
         <button id="registerButton">
             📝 สมัครสมาชิก
         </button>
-
 
         <button
             class="secondary"
@@ -213,11 +197,7 @@
             กลับไปเข้าสู่ระบบ
         </button>
 
-
-        <p
-            id="registerMessage"
-            class="message"
-        ></p>
+        <p id="registerMessage" class="message"></p>
 
     </div>
 
@@ -225,17 +205,13 @@
 
     <!-- MAIN -->
 
-    <div
-        id="mainPage"
-        class="box hidden"
-    >
+    <div id="mainPage" class="box hidden">
 
         <h1>🏫 SW Photo Finder</h1>
 
         <p class="subtitle">
             ค้นหารูปกิจกรรมโรงเรียน
         </p>
-
 
         <div class="search-box">
 
@@ -245,16 +221,13 @@
                 placeholder="เช่น กีฬาสี 2569"
             >
 
-
             <button id="searchButton">
                 🔎 ค้นหา
             </button>
 
         </div>
 
-
         <div id="results"></div>
-
 
         <button
             class="secondary logout"
@@ -284,17 +257,19 @@
         createUserWithEmailAndPassword,
         signInWithEmailAndPassword,
         onAuthStateChanged,
-        signOut
+        signOut,
+        setPersistence,
+        browserLocalPersistence
     } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
 
-    // -------------------------
+    // =========================
     // Firebase Config
-    // -------------------------
+    // =========================
 
     const firebaseConfig = {
 
-        apiKey: "AIzaSyBnXa3xAHIfIKLlYku8gH9nl8CXZ6I3QzA",
+        apiKey: "AIzaSyBnXa3xAHIfIKLlYku8gH9nl8CXZ6I3Qz",
 
         authDomain: "sw-photo-finder.firebaseapp.com",
 
@@ -311,28 +286,43 @@
     };
 
 
+    // =========================
+    // เริ่ม Firebase
+    // =========================
+
     const app = initializeApp(firebaseConfig);
 
     const auth = getAuth(app);
 
 
+    // =========================
+    // ตั้งค่าให้จำสถานะ Login
+    // =========================
 
-    // -------------------------
-    // แปลง Username เป็น Email
-    // -------------------------
+    const persistenceReady =
+        setPersistence(
+            auth,
+            browserLocalPersistence
+        );
+
+
+    // =========================
+    // Username → Email
+    // =========================
 
     function usernameToEmail(username) {
 
-        return username.toLowerCase()
+        return username
+            .trim()
+            .toLowerCase()
             + "@swphotofinder.local";
 
     }
 
 
-
-    // -------------------------
+    // =========================
     // แสดง Login
-    // -------------------------
+    // =========================
 
     function showLogin() {
 
@@ -351,10 +341,9 @@
     }
 
 
-
-    // -------------------------
+    // =========================
     // แสดง Register
-    // -------------------------
+    // =========================
 
     function showRegister() {
 
@@ -373,10 +362,9 @@
     }
 
 
-
-    // -------------------------
+    // =========================
     // แสดง Main
-    // -------------------------
+    // =========================
 
     function showMain() {
 
@@ -395,10 +383,9 @@
     }
 
 
-
-    // -------------------------
-    // ไป Register
-    // -------------------------
+    // =========================
+    // ไปสมัครสมาชิก
+    // =========================
 
     document
         .getElementById("goRegister")
@@ -413,10 +400,9 @@
         });
 
 
-
-    // -------------------------
+    // =========================
     // กลับ Login
-    // -------------------------
+    // =========================
 
     document
         .getElementById("goLogin")
@@ -431,10 +417,9 @@
         });
 
 
-
-    // -------------------------
+    // =========================
     // สมัครสมาชิก
-    // -------------------------
+    // =========================
 
     document
         .getElementById("registerButton")
@@ -466,6 +451,8 @@
 
             message.className = "message";
 
+
+            // ตรวจข้อมูล
 
             if (
                 username === "" ||
@@ -537,6 +524,13 @@
 
             try {
 
+                // รอให้ตั้งค่า Local Persistence เสร็จก่อน
+
+                await persistenceReady;
+
+
+                // สร้างบัญชี Firebase
+
                 await createUserWithEmailAndPassword(
                     auth,
                     email,
@@ -551,6 +545,8 @@
                 message.textContent =
                     "สมัครสมาชิกสำเร็จ 🎉";
 
+
+                // ล้างช่องกรอก
 
                 document
                     .getElementById("registerUsername")
@@ -567,7 +563,10 @@
 
             } catch (error) {
 
-                console.error(error);
+                console.error(
+                    "Register error:",
+                    error
+                );
 
 
                 if (
@@ -582,7 +581,7 @@
 
                     message.textContent =
                         "สมัครสมาชิกไม่สำเร็จ: "
-                        + error.message;
+                        + error.code;
 
                 }
 
@@ -591,10 +590,9 @@
         });
 
 
-
-    // -------------------------
+    // =========================
     // Login
-    // -------------------------
+    // =========================
 
     document
         .getElementById("loginButton")
@@ -641,6 +639,13 @@
 
             try {
 
+                // รอ Persistence
+
+                await persistenceReady;
+
+
+                // Login Firebase
+
                 await signInWithEmailAndPassword(
                     auth,
                     email,
@@ -653,41 +658,81 @@
 
             } catch (error) {
 
-                console.error(error);
+                console.error(
+                    "Login error:",
+                    error
+                );
 
 
-                message.textContent =
-                    "ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง";
+                // แสดง Error จริงเพื่อช่วยตรวจสอบ
+
+                if (
+                    error.code ===
+                    "auth/invalid-credential"
+                ) {
+
+                    message.textContent =
+                        "ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง";
+
+                } else if (
+                    error.code ===
+                    "auth/user-not-found"
+                ) {
+
+                    message.textContent =
+                        "ไม่พบบัญชีนี้";
+
+                } else if (
+                    error.code ===
+                    "auth/wrong-password"
+                ) {
+
+                    message.textContent =
+                        "รหัสผ่านไม่ถูกต้อง";
+
+                } else {
+
+                    message.textContent =
+                        "เข้าสู่ระบบไม่สำเร็จ: "
+                        + error.code;
+
+                }
 
             }
 
         });
 
 
-
-    // -------------------------
+    // =========================
     // ตรวจสอบสถานะ Login
-    // -------------------------
+    // =========================
 
-    onAuthStateChanged(auth, function (user) {
+    onAuthStateChanged(
+        auth,
+        function (user) {
 
-        if (user) {
+            if (user) {
 
-            showMain();
+                console.log(
+                    "เข้าสู่ระบบอยู่:",
+                    user.email
+                );
 
-        } else {
+                showMain();
 
-            showLogin();
+            } else {
+
+                showLogin();
+
+            }
 
         }
-
-    });
-
+    );
 
 
-    // -------------------------
+    // =========================
     // ค้นหากิจกรรม
-    // -------------------------
+    // =========================
 
     document
         .getElementById("searchButton")
@@ -723,18 +768,31 @@
         });
 
 
-
-    // -------------------------
+    // =========================
     // Logout
-    // -------------------------
+    // =========================
 
     document
         .getElementById("logoutButton")
-        .addEventListener("click", async function () {
+        .addEventListener(
+            "click",
+            async function () {
 
-            await signOut(auth);
+                try {
 
-        });
+                    await signOut(auth);
+
+                } catch (error) {
+
+                    console.error(
+                        "Logout error:",
+                        error
+                    );
+
+                }
+
+            }
+        );
 
 </script>
 

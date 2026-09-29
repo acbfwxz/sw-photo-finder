@@ -4,152 +4,296 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SW Photo Finder - ค้นหารูปกิจกรรม & ผลงาน Portfolio</title>
-  <!-- Tailwind CSS & Google Fonts -->
+  
+  <!-- Tailwind CSS สำหรับจัดดีไซน์ฝั่งหน้าหลัก -->
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
   <style>
-    body { font-family: 'Sarabun', sans-serif; }
+    * { box-sizing: border-box; }
+    body { font-family: 'Sarabun', sans-serif; background: #f8fafc; color: #1e293b; }
+    
+    .error { color: #ef4444; text-align: center; margin-top: 10px; font-size: 14px; }
+    .success { color: #22c55e; text-align: center; margin-top: 10px; font-size: 14px; }
+    
+    /* ควบคุมการแสดงหน้าแบบเดิมของคุณ */
+    #mainPage { display: none; }
+    #loginPage { display: block; }
+    #registerPage { display: none; }
   </style>
 </head>
-<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col justify-between">
 
-  <!-- ================= 1. HEADER & NAVBAR ================= -->
-  <header class="bg-blue-900 text-white shadow-md sticky top-0 z-50">
-    <div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
-      <!-- Logo / Title -->
-      <div class="flex items-center space-x-3 cursor-pointer" onclick="window.location.reload()">
-        <span class="text-2xl">📸</span>
-        <div>
-          <h1 class="text-lg font-bold leading-tight">SW Photo Finder</h1>
-          <p class="text-xs text-blue-200">โรงเรียนสุวรรณภูมิวิทยาลัย</p>
-        </div>
-      </div>
+<body class="min-h-screen flex flex-col justify-between">
 
-      <!-- User Profile & Login/Logout Status -->
-      <div id="auth-section" class="flex items-center space-x-3">
-        <!-- กรณีเข้าสู่ระบบแล้ว ( Default สำหรับแสดงผล ) -->
-        <div id="user-info" class="flex items-center space-x-3">
-          <img id="user-avatar" src="https://api.dicebear.com/7.x/avataaars/svg?seed=Chanasit" alt="Profile" class="w-9 h-9 rounded-full bg-blue-100 border border-blue-300">
-          <div class="hidden sm:block text-left">
-            <p id="user-name-display" class="text-xs font-semibold">นายชนสิษฎ์ สิงห์นันท์</p>
-            <p id="user-role-display" class="text-[10px] text-blue-200">นักเรียน (ส.ว.)</p>
-          </div>
-          <button onclick="handleLogout()" class="text-xs bg-red-500/20 hover:bg-red-500 text-red-100 hover:text-white px-2.5 py-1.5 rounded-lg transition border border-red-400/30">
-            ออกจากระบบ
-          </button>
-        </div>
-
-        <!-- ปุ่มสำหรับกรณีที่ยังไม่ได้ล็อกอิน (เผื่อใช้ซ่อน/แสดง) -->
-        <div id="guest-info" class="hidden space-x-2">
-          <button onclick="alert('เปิดหน้าต่างเข้าสู่ระบบ')" class="text-xs bg-blue-700 hover:bg-blue-800 text-white px-3 py-1.5 rounded-lg transition">เข้าสู่ระบบ</button>
-          <button onclick="alert('เปิดหน้าต่างสมัครสมาชิก')" class="text-xs bg-white text-blue-900 hover:bg-blue-50 px-3 py-1.5 rounded-lg font-medium transition">สมัครสมาชิก</button>
-        </div>
-      </div>
+  <!-- ================= 1. หน้า LOGIN (แสดงขึ้นมาก่อนเสมอ) ================= -->
+  <div class="max-w-md w-full mx-auto my-auto p-8 bg-white rounded-2xl shadow-xl border border-slate-100" id="loginPage">
+    <div class="text-center mb-6">
+      <span class="text-4xl">📸</span>
+      <h1 class="text-2xl font-bold text-slate-900 mt-2">SW Photo Finder</h1>
+      <p class="text-sm text-slate-500 mt-1">ค้นหารูปกิจกรรมและผลงานโรงเรียน</p>
     </div>
-  </header>
 
-  <!-- ================= 2. MAIN CONTENT ================= -->
-  <main class="max-w-5xl mx-auto px-4 py-8 flex-grow w-full">
+    <div class="space-y-4">
+      <input type="text" id="loginUsername" placeholder="ชื่อผู้ใช้"
+        class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm">
+      <input type="password" id="loginPassword" placeholder="รหัสผ่าน"
+        class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm">
+      
+      <button id="loginBtn" class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl transition shadow-sm">
+        เข้าสู่ระบบ
+      </button>
+
+      <button class="w-full py-2.5 text-blue-600 hover:bg-blue-50 font-medium text-sm rounded-xl transition" id="showRegisterBtn">
+        สมัครสมาชิกใหม่
+      </button>
+
+      <div class="error" id="loginError"></div>
+    </div>
+  </div>
+
+
+  <!-- ================= 2. หน้า REGISTER ================= -->
+  <div class="max-w-md w-full mx-auto my-auto p-8 bg-white rounded-2xl shadow-xl border border-slate-100" id="registerPage">
+    <div class="text-center mb-6">
+      <span class="text-4xl">📝</span>
+      <h1 class="text-2xl font-bold text-slate-900 mt-2">สมัครสมาชิก</h1>
+      <p class="text-sm text-slate-500 mt-1">สร้างบัญชีเพื่อใช้งานระบบค้นหารูป</p>
+    </div>
+
+    <div class="space-y-4">
+      <input type="text" id="registerUsername" placeholder="ชื่อผู้ใช้"
+        class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm">
+      <input type="password" id="registerPassword" placeholder="รหัสผ่าน (อย่างน้อย 6 ตัวอักษร)"
+        class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm">
+      <input type="password" id="registerConfirmPassword" placeholder="ยืนยันรหัสผ่าน"
+        class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none text-sm">
+      
+      <button id="registerBtn" class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl transition shadow-sm">
+        ยืนยันสมัครสมาชิก
+      </button>
+
+      <button class="w-full py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium text-sm rounded-xl transition" id="backLoginBtn">
+        กลับไปเข้าสู่ระบบ
+      </button>
+
+      <div class="error" id="registerError"></div>
+    </div>
+  </div>
+
+
+  <!-- ================= 3. หน้าหลัก (MAIN PAGE จะแสดงก็ต่อเมื่อ Login สำเร็จแล้วเท่านั้น) ================= -->
+  <div id="mainPage" class="flex flex-col min-h-screen justify-between w-full">
     
-    <!-- Hero / Form Section -->
-    <section class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 md:p-8 mb-8">
-      <div class="text-center max-w-2xl mx-auto mb-8">
-        <span class="inline-block bg-blue-50 text-blue-700 text-xs font-semibold px-3 py-1 rounded-full mb-2">Portfolio TCAS Assistant</span>
-        <h2 class="text-2xl font-bold text-slate-900 mb-2">ค้นหารูปภาพกิจกรรมโรงเรียนด้วย AI</h2>
-        <p class="text-slate-600 text-sm">ใส่อัปโหลดรูปถ่ายหน้าตรง และข้อมูลนักเรียน เพื่อให้ระบบ AI สแกนค้นหากิจกรรมและผลงานของคุณจากแฟนเพจโรงเรียนสุวรรณภูมิวิทยาลัย</p>
+    <!-- Navbar -->
+    <header class="bg-blue-900 text-white shadow-md sticky top-0 z-50">
+      <div class="max-w-5xl mx-auto px-4 py-3 flex justify-between items-center">
+        <div class="flex items-center space-x-2">
+          <span class="text-xl">📸</span>
+          <span class="font-bold text-base">SW Photo Finder</span>
+        </div>
+        <button id="logoutBtn" class="text-xs bg-red-500/20 hover:bg-red-500 text-red-100 hover:text-white px-3 py-1.5 rounded-lg transition border border-red-400/30">
+          ออกจากระบบ
+        </button>
       </div>
+    </header>
 
-      <form id="search-form" class="grid grid-cols-1 md:grid-cols-12 gap-6 items-start">
-        
-        <!-- อัปโหลดรูปหน้าตรง -->
-        <div class="md:col-span-5 flex flex-col items-center">
-          <label class="block text-sm font-semibold text-slate-700 mb-2 w-full text-left md:text-center">
-            รูปถ่ายหน้าตรง <span class="text-red-500">*</span>
-          </label>
-          <div class="relative w-full max-w-[220px] h-56 border-2 border-dashed border-slate-300 hover:border-blue-500 rounded-2xl flex flex-col items-center justify-center bg-slate-50 hover:bg-blue-50/50 transition cursor-pointer overflow-hidden group">
-            <input type="file" id="face-image" accept="image/*" required class="absolute inset-0 opacity-0 cursor-pointer z-10" onchange="previewImage(event)">
-            
-            <div id="upload-placeholder" class="text-center p-4">
-              <div class="w-12 h-12 bg-white rounded-full shadow-sm flex items-center justify-center mx-auto mb-3 text-2xl">📷</div>
-              <p class="text-xs text-slate-700 font-semibold mb-1">คลิกเพื่อเลือกรูปหน้าตรง</p>
-              <p class="text-[10px] text-slate-400">รองรับ JPG, PNG (ไม่เกิน 5MB)</p>
-            </div>
-
-            <img id="image-preview" class="hidden absolute inset-0 w-full h-full object-cover">
-          </div>
-          <p class="text-[11px] text-slate-400 mt-2 text-center">ใช้สำหรับ AI เปรียบเทียบใบหน้าเท่านั้น</p>
+    <!-- Main Content -->
+    <main class="max-w-4xl mx-auto px-4 py-8 flex-grow w-full">
+      
+      <!-- ส่วนฟอร์มอัปโหลดรูปหน้าตรง + ค้นหาด้วย AI -->
+      <section class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 md:p-8 mb-8">
+        <div class="text-center max-w-xl mx-auto mb-6">
+          <h2 class="text-xl font-bold text-slate-900 mb-1">ค้นหารูปกิจกรรมด้วย AI สแกนหน้า</h2>
+          <p class="text-slate-500 text-xs">อัปโหลดรูปหน้าตรง พร้อมกรอกชื่อ-นามสกุล เพื่อค้นหาภาพกิจกรรมจากเพจโรงเรียนสุวรรณภูมิวิทยาลัย</p>
         </div>
 
-        <!-- กรอกข้อมูล ชื่อ-นามสกุล และ ชั้น -->
-        <div class="md:col-span-7 space-y-4">
-          <div>
-            <label class="block text-sm font-semibold text-slate-700 mb-1">ชื่อ - นามสกุล <span class="text-red-500">*</span></label>
-            <input type="text" id="fullname" value="นายชนสิษฎ์ สิงห์นันท์" placeholder="เช่น นายชนสิษฎ์ สิงห์นันท์" required
-              class="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition text-sm">
+        <form id="search-form" class="grid grid-cols-1 md:grid-cols-12 gap-6 items-start">
+          
+          <!-- อัปโหลดรูปหน้าตรง -->
+          <div class="md:col-span-5 flex flex-col items-center">
+            <label class="block text-xs font-semibold text-slate-700 mb-2 w-full text-left md:text-center">รูปถ่ายหน้าตรง (Reference Face)</label>
+            <div class="relative w-full max-w-[200px] h-48 border-2 border-dashed border-slate-300 hover:border-blue-500 rounded-2xl flex flex-col items-center justify-center bg-slate-50 cursor-pointer overflow-hidden">
+              <input type="file" id="face-image" accept="image/*" required class="absolute inset-0 opacity-0 cursor-pointer z-10" onchange="previewImage(event)">
+              
+              <div id="upload-placeholder" class="text-center p-3">
+                <span class="text-3xl mb-1 block">📷</span>
+                <p class="text-xs text-slate-600 font-medium">คลิกอัปโหลดรูป</p>
+              </div>
+              <img id="image-preview" class="hidden absolute inset-0 w-full h-full object-cover">
+            </div>
           </div>
 
-          <div class="grid grid-cols-2 gap-4">
+          <!-- ฟิลด์ข้อมูลค้นหา -->
+          <div class="md:col-span-7 space-y-3">
             <div>
-              <label class="block text-sm font-semibold text-slate-700 mb-1">ระดับชั้นมัธยม <span class="text-red-500">*</span></label>
-              <select id="grade" class="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition text-sm">
-                <option value="ม.6" selected>มัธยมศึกษาปีที่ 6</option>
-                <option value="ม.5">มัธยมศึกษาปีที่ 5</option>
-                <option value="ม.4">มัธยมศึกษาปีที่ 4</option>
-                <option value="ม.3">มัธยมศึกษาปีที่ 3</option>
-                <option value="ม.2">มัธยมศึกษาปีที่ 2</option>
-                <option value="ม.1">มัธยมศึกษาปีที่ 1</option>
-              </select>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">ชื่อ - นามสกุล</label>
+              <input type="text" id="fullname" placeholder="เช่น นายชนสิษฎ์ สิงห์นันท์" required
+                class="w-full px-3.5 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-500 outline-none text-sm">
             </div>
-            <div>
-              <label class="block text-sm font-semibold text-slate-700 mb-1">ห้อง <span class="text-red-500">*</span></label>
-              <input type="number" id="room" value="1" placeholder="เช่น 1" min="1" max="15" required
-                class="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition text-sm">
+
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block text-xs font-semibold text-slate-700 mb-1">ระดับชั้น</label>
+                <select id="grade" class="w-full px-3.5 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-500 outline-none text-sm bg-white">
+                  <option value="ม.6">มัธยมศึกษาปีที่ 6</option>
+                  <option value="ม.5">มัธยมศึกษาปีที่ 5</option>
+                  <option value="ม.4">มัธยมศึกษาปีที่ 4</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-slate-700 mb-1">ห้อง</label>
+                <input type="number" id="room" placeholder="1" min="1" max="15" required
+                  class="w-full px-3.5 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-500 outline-none text-sm">
+              </div>
             </div>
+
+            <button type="submit" 
+              class="w-full mt-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 px-4 rounded-lg shadow transition text-sm flex items-center justify-center space-x-2">
+              <span>🔍 ค้นหารูปภาพด้วย AI</span>
+            </button>
           </div>
+        </form>
+      </section>
 
-          <button type="submit" 
-            class="w-full mt-4 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-semibold py-3 px-6 rounded-lg shadow hover:shadow-md transition flex items-center justify-center space-x-2">
-            <span>🔍 ค้นหากิจกรรมของฉันด้วย AI</span>
-          </button>
+      <!-- ส่วนแสดงผลลัพธ์ -->
+      <section id="results-section">
+        <div class="flex justify-between items-center mb-4">
+          <h3 class="text-base font-bold text-slate-800">ผลการค้นหา</h3>
+          <span id="result-count" class="text-xs bg-slate-200 text-slate-700 px-2.5 py-0.5 rounded-full">พบ 0 รายการ</span>
         </div>
 
-      </form>
-    </section>
-
-    <!-- Results Gallery Section -->
-    <section id="results-section">
-      <div class="flex justify-between items-center mb-6">
-        <div>
-          <h3 class="text-xl font-bold text-slate-800">ผลการค้นหากิจกรรม</h3>
-          <p class="text-xs text-slate-500">รูปภาพและผลงานที่พบจากแฟนเพจโรงเรียนสุวรรณภูมิวิทยาลัย</p>
+        <div id="searchResult" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div class="col-span-full text-center py-10 bg-white rounded-xl border border-dashed border-slate-200 text-slate-400 text-xs">
+            กรุณาอัปโหลดรูปและกดค้นหาเพื่อเริ่มใช้งาน AI สแกนภาพ
+          </div>
         </div>
-        <span id="result-count" class="text-xs bg-slate-200 text-slate-700 font-medium px-3 py-1 rounded-full">พบ 0 รายการ</span>
-      </div>
+      </section>
 
-      <!-- Grid แสดงรูปภาพผลลัพธ์ -->
-      <div id="results-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        <!-- ข้อความเริ่มต้นก่อนกดค้นหา -->
-        <div class="col-span-full text-center py-12 bg-white rounded-2xl border border-dashed border-slate-200">
-          <div class="text-4xl mb-3">🖼️</div>
-          <p class="text-slate-500 text-sm">ยังไม่มีผลลัพธ์ กรุณาอัปโหลดรูปหน้าตรงและกด "ค้นหากิจกรรมของฉัน"</p>
-        </div>
-      </div>
-    </section>
+    </main>
 
-  </main>
+    <!-- Footer -->
+    <footer class="bg-slate-900 text-slate-400 text-xs py-4 text-center mt-8">
+      <p>© 2026 SW Photo Finder - โรงเรียนสุวรรณภูมิวิทยาลัย</p>
+    </footer>
+  </div>
 
-  <!-- ================= 3. FOOTER ================= -->
-  <footer class="bg-slate-900 text-slate-400 text-xs py-6 mt-12 border-t border-slate-800">
-    <div class="max-w-6xl mx-auto px-4 text-center space-y-2">
-      <p>© 2026 SW Photo Finder - ระบบค้นหารูปภาพกิจกรรมเพื่อการทำ Portfolio</p>
-      <p class="text-slate-500">โรงเรียนสุวรรณภูมิวิทยาลัย (ส.ว.) | พัฒนาเพื่อสนับสนุนการศึกษาและการยื่น TCAS</p>
-    </div>
-  </footer>
 
-  <!-- ================= 4. JAVASCRIPT ================= -->
-  <script>
-    // 1. ฟังก์ชันแสดงตัวอย่างรูปหน้าตรงเมื่อมีการอัปโหลด
-    function previewImage(event) {
+  <!-- ================= FIREBASE & APP SCRIPT ================= -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import {
+      getAuth,
+      createUserWithEmailAndPassword,
+      signInWithEmailAndPassword,
+      onAuthStateChanged,
+      signOut,
+      setPersistence,
+      browserLocalPersistence
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyA8Ci749CXjzQJ9DhzN8N9ceWv2q6S4A6w",
+      authDomain: "sw-photo-finder-5a84b.firebaseapp.com",
+      projectId: "sw-photo-finder-5a84b",
+      storageBucket: "sw-photo-finder-5a84b.firebasestorage.app",
+      messagingSenderId: "606253778771",
+      appId: "1:606253778771:web:24f092abfa52209fdac3a6",
+      measurementId: "G-PG8SN3LVM0"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    const persistenceReady = setPersistence(auth, browserLocalPersistence);
+
+    function usernameToEmail(username) {
+      return username.trim().toLowerCase() + "@swphotofinder.local";
+    }
+
+    const loginPage = document.getElementById("loginPage");
+    const registerPage = document.getElementById("registerPage");
+    const mainPage = document.getElementById("mainPage");
+
+    // เปลี่ยนไปหน้าสมัครสมาชิก
+    document.getElementById("showRegisterBtn").addEventListener("click", () => {
+      loginPage.style.display = "none";
+      registerPage.style.display = "block";
+    });
+
+    // กลับไปหน้า Login
+    document.getElementById("backLoginBtn").addEventListener("click", () => {
+      registerPage.style.display = "none";
+      loginPage.style.display = "block";
+    });
+
+    // สมัครสมาชิก
+    document.getElementById("registerBtn").addEventListener("click", async () => {
+      const username = document.getElementById("registerUsername").value.trim();
+      const password = document.getElementById("registerPassword").value;
+      const confirmPassword = document.getElementById("registerConfirmPassword").value;
+      const error = document.getElementById("registerError");
+
+      error.textContent = "";
+
+      if (!username || !password || !confirmPassword) {
+        error.textContent = "กรุณากรอกข้อมูลให้ครบ";
+        return;
+      }
+      if (password.length < 6) {
+        error.textContent = "รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร";
+        return;
+      }
+      if (password !== confirmPassword) {
+        error.textContent = "รหัสผ่านไม่ตรงกัน";
+        return;
+      }
+
+      try {
+        await persistenceReady;
+        await createUserWithEmailAndPassword(auth, usernameToEmail(username), password);
+      } catch (err) {
+        console.error(err);
+        if (err.code === "auth/email-already-in-use") {
+          error.textContent = "ชื่อผู้ใช้นี้ถูกใช้แล้ว";
+        } else {
+          error.textContent = "สมัครสมาชิกไม่สำเร็จ: " + err.message;
+        }
+      }
+    });
+
+    // เข้าสู่ระบบ
+    document.getElementById("loginBtn").addEventListener("click", async () => {
+      const username = document.getElementById("loginUsername").value.trim();
+      const password = document.getElementById("loginPassword").value;
+      const error = document.getElementById("loginError");
+
+      error.textContent = "";
+
+      if (!username || !password) {
+        error.textContent = "กรุณากรอกชื่อผู้ใช้และรหัสผ่าน";
+        return;
+      }
+
+      try {
+        await persistenceReady;
+        await signInWithEmailAndPassword(auth, usernameToEmail(username), password);
+      } catch (err) {
+        console.error(err);
+        if (err.code === "auth/invalid-credential" || err.code === "auth/wrong-password" || err.code === "auth/user-not-found") {
+          error.textContent = "ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง";
+        } else {
+          error.textContent = "เข้าสู่ระบบไม่สำเร็จ: " + err.message;
+        }
+      }
+    });
+
+    // ออกจากระบบ
+    document.getElementById("logoutBtn").addEventListener("click", async () => {
+      await signOut(auth);
+    });
+
+    // ฟังก์ชันพรีวิวรูปภาพหน้าตรง
+    window.previewImage = function(event) {
       const input = event.target;
       if (input.files && input.files[0]) {
         const reader = new FileReader();
@@ -162,98 +306,72 @@
         }
         reader.readAsDataURL(input.files[0]);
       }
-    }
+    };
 
-    // 2. ฟังก์ชันจำลองการออกจากระบบ (Logout)
-    function handleLogout() {
-      if (confirm('คุณต้องการออกจากระบบใช่หรือไม่?')) {
-        document.getElementById('user-info').classList.add('hidden');
-        document.getElementById('guest-info').classList.remove('hidden');
-        alert('ออกจากระบบเรียบร้อยแล้ว');
-      }
-    }
-
-    // 3. ฟังก์ชันกดค้นหาและจำลองการสแกนด้วย AI
-    document.getElementById('search-form').addEventListener('submit', function(e) {
+    // ฟังก์ชันค้นหา (จำลองการทำงาน AI สแกนรูป)
+    document.getElementById("search-form").addEventListener("submit", (e) => {
       e.preventDefault();
-      
-      const fullname = document.getElementById('fullname').value;
-      const grade = document.getElementById('grade').value;
-      const room = document.getElementById('room').value;
-      const resultsGrid = document.getElementById('results-grid');
-      const resultCount = document.getElementById('result-count');
+      const fullname = document.getElementById("fullname").value.trim();
+      const result = document.getElementById("searchResult");
+      const resultCount = document.getElementById("result-count");
 
-      // เลื่อนหน้าจอลงมาตรงส่วนผลลัพธ์
-      document.getElementById('results-section').scrollIntoView({ behavior: 'smooth' });
+      if (!fullname) return;
 
-      // แสดง Loading State
-      resultsGrid.innerHTML = `
-        <div class="col-span-full text-center py-16 bg-white rounded-2xl border border-slate-200">
-          <div class="inline-block animate-spin rounded-full h-10 w-10 border-4 border-blue-600 border-t-transparent mb-4"></div>
-          <h4 class="font-semibold text-slate-800 text-base mb-1">กำลังใช้ AI สแกนหาใบหน้าและข้อความ...</h4>
-          <p class="text-slate-500 text-xs">กำลังเปรียบเทียบใบหน้า และค้นหาชื่อ "${fullname}" (${grade}/${room}) จากเพจสุวรรณภูมิวิทยาลัย</p>
+      result.innerHTML = `
+        <div class="col-span-full text-center py-8 bg-white rounded-xl border border-slate-200">
+          <div class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-blue-600 border-t-transparent mb-2"></div>
+          <p class="text-xs text-slate-600 font-medium">กำลังใช้ AI สแกนใบหน้าและค้นหาชื่อ "${fullname}"...</p>
         </div>
       `;
 
-      // จำลองการโหลดข้อมูลจากระบบ AI (2 วินาที)
       setTimeout(() => {
         const mockData = [
-          { 
-            title: "กิจกรรมพิธีมอบเกียรติบัตรนักเรียนดีเด่นประจำปีการศึกษา", 
-            date: "10 กุมภาพันธ์ 2026", 
-            matchScore: "98%",
-            img: "https://picsum.photos/500/350?random=10",
-            category: "เกียรติบัตร / ผลงาน"
-          },
-          { 
-            title: "การแข่งขันกีฬาสีภายใน สุวรรณภูมิเกมส์ 2025", 
-            date: "15 ธันวาคม 2025", 
-            matchScore: "94%",
-            img: "https://picsum.photos/500/350?random=11",
-            category: "กิจกรรมโรงเรียน"
-          },
-          { 
-            title: "กิจกรรมวันสุนทรภู่และวันภาษาไทยแห่งชาติ", 
-            date: "26 มิถุนายน 2025", 
-            matchScore: "89%",
-            img: "https://picsum.photos/500/350?random=12",
-            category: "กิจกรรมวิชาการ"
-          }
+          { title: "กิจกรรมมอบเกียรติบัตรเรียนดีเด่น", date: "10 ก.พ. 2026", match: "98%", img: "https://picsum.photos/400/300?random=1" },
+          { title: "การแข่งขันกีฬาสี สุวรรณภูมิเกมส์", date: "15 ธ.ค. 2025", match: "94%", img: "https://picsum.photos/400/300?random=2" }
         ];
 
         resultCount.textContent = `พบ ${mockData.length} รายการ`;
-        resultsGrid.innerHTML = '';
+        result.innerHTML = "";
 
         mockData.forEach(item => {
-          resultsGrid.innerHTML += `
-            <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden hover:shadow-md transition flex flex-col justify-between">
+          result.innerHTML += `
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden flex flex-col justify-between">
               <div>
-                <div class="relative h-48 bg-slate-100">
+                <div class="relative h-40 bg-slate-100">
                   <img src="${item.img}" class="w-full h-full object-cover">
-                  <span class="absolute top-2 right-2 bg-blue-900/90 text-white text-[10px] font-semibold px-2.5 py-1 rounded-full backdrop-blur-sm">
-                    🎯 ความแม่นยำ ${item.matchScore}
-                  </span>
-                  <span class="absolute bottom-2 left-2 bg-slate-900/70 text-white text-[10px] px-2 py-0.5 rounded">
-                    ${item.category}
+                  <span class="absolute top-2 right-2 bg-blue-900/90 text-white text-[10px] px-2 py-0.5 rounded-full">
+                    🎯 ตรงกัน ${item.match}
                   </span>
                 </div>
-                <div class="p-4">
-                  <h4 class="font-semibold text-slate-800 text-sm mb-1 line-clamp-2">${item.title}</h4>
-                  <p class="text-xs text-slate-400 mb-2">🗓️ ${item.date}</p>
+                <div class="p-3">
+                  <h4 class="font-semibold text-slate-800 text-xs mb-1">${item.title}</h4>
+                  <p class="text-[11px] text-slate-400">🗓️ ${item.date}</p>
                 </div>
               </div>
-              <div class="px-4 pb-4">
-                <button onclick="alert('เพิ่มรูปนี้เข้าสู่ Portfolio เรียบร้อย!')" 
-                  class="w-full bg-blue-50 hover:bg-blue-100 text-blue-700 font-semibold text-xs py-2 rounded-lg transition border border-blue-200">
-                  + เลือกใส่ Portfolio
+              <div class="p-3 pt-0">
+                <button onclick="alert('เลือกรูปภาพนี้เข้าสู่ Portfolio แล้ว!')" class="w-full bg-blue-50 hover:bg-blue-100 text-blue-700 text-xs font-semibold py-1.5 rounded-lg transition">
+                  + เลือกเข้า Portfolio
                 </button>
               </div>
             </div>
           `;
         });
+      }, 1500);
+    });
 
-      }, 2000);
+    // ตรวจสอบสถานะการ Login (ทำงานแบบต้นฉบับเป๊ะๆ)
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        loginPage.style.display = "none";
+        registerPage.style.display = "none";
+        mainPage.style.display = "flex";
+      } else {
+        loginPage.style.display = "block";
+        registerPage.style.display = "none";
+        mainPage.style.display = "none";
+      }
     });
   </script>
+
 </body>
 </html>

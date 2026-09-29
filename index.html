@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="th">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,6 +8,7 @@
     <title>SW Photo Finder</title>
 
     <style>
+
         * {
             box-sizing: border-box;
         }
@@ -63,8 +65,8 @@
             cursor: pointer;
         }
 
-        button:hover {
-            opacity: 0.9;
+        button:active {
+            transform: scale(0.98);
         }
 
         .secondary {
@@ -83,10 +85,14 @@
             display: none;
         }
 
-        #message {
+        .message {
             text-align: center;
             margin-top: 15px;
             color: #d33;
+        }
+
+        .success {
+            color: green;
         }
 
         .search-box {
@@ -96,14 +102,20 @@
         .logout {
             margin-top: 20px;
         }
+
     </style>
+
 </head>
+
 
 <body>
 
+
 <div class="container">
 
+
     <!-- LOGIN -->
+
     <div id="loginPage" class="box">
 
         <h1>🏫 SW Photo Finder</h1>
@@ -112,12 +124,14 @@
             เข้าสู่ระบบเพื่อค้นหารูปกิจกรรม
         </p>
 
+
         <input
             type="text"
             id="loginUsername"
             placeholder="ชื่อผู้ใช้"
             autocomplete="username"
         >
+
 
         <input
             type="password"
@@ -126,25 +140,42 @@
             autocomplete="current-password"
         >
 
-        <button onclick="login()">
+
+        <button id="loginButton">
             🔐 เข้าสู่ระบบ
         </button>
 
-        <p class="link" onclick="showRegister()">
+
+        <p
+            class="link"
+            id="goRegister"
+        >
             ยังไม่มีบัญชี? สมัครสมาชิก
         </p>
+
+
+        <p
+            id="loginMessage"
+            class="message"
+        ></p>
 
     </div>
 
 
+
     <!-- REGISTER -->
-    <div id="registerPage" class="box hidden">
+
+    <div
+        id="registerPage"
+        class="box hidden"
+    >
 
         <h1>📝 สมัครสมาชิก</h1>
 
         <p class="subtitle">
             สร้างบัญชี SW Photo Finder
         </p>
+
 
         <input
             type="text"
@@ -153,12 +184,14 @@
             autocomplete="username"
         >
 
+
         <input
             type="password"
             id="registerPassword"
             placeholder="รหัสผ่าน"
             autocomplete="new-password"
         >
+
 
         <input
             type="password"
@@ -167,20 +200,389 @@
             autocomplete="new-password"
         >
 
-        <button onclick="register()">
+
+        <button id="registerButton">
             📝 สมัครสมาชิก
         </button>
 
-        <button class="secondary" onclick="showLogin()">
+
+        <button
+            class="secondary"
+            id="goLogin"
+        >
             กลับไปเข้าสู่ระบบ
+        </button>
+
+
+        <p
+            id="registerMessage"
+            class="message"
+        ></p>
+
+    </div>
+
+
+
+    <!-- MAIN -->
+
+    <div
+        id="mainPage"
+        class="box hidden"
+    >
+
+        <h1>🏫 SW Photo Finder</h1>
+
+        <p class="subtitle">
+            ค้นหารูปกิจกรรมโรงเรียน
+        </p>
+
+
+        <div class="search-box">
+
+            <input
+                type="text"
+                id="search"
+                placeholder="เช่น กีฬาสี 2569"
+            >
+
+
+            <button id="searchButton">
+                🔎 ค้นหา
+            </button>
+
+        </div>
+
+
+        <div id="results"></div>
+
+
+        <button
+            class="secondary logout"
+            id="logoutButton"
+        >
+            🚪 ออกจากระบบ
         </button>
 
     </div>
 
 
-    <!-- MAIN -->
-    <div id="mainPage" class="box hidden">
+</div>
 
-        <h1>🏫 SW Photo Finder</h1>
 
-        <
+
+<script>
+
+    /*
+     * ตัวอย่างบัญชีชั่วคราว
+     *
+     * ตอนนี้ยังไม่ได้เชื่อมฐานข้อมูล
+     * ข้อมูลจะหายเมื่อรีเฟรชหน้าเว็บ
+     */
+
+    let users = [];
+
+
+    // -------------------------
+    // เปลี่ยนไปหน้า Register
+    // -------------------------
+
+    document
+        .getElementById("goRegister")
+        .addEventListener("click", function () {
+
+            document
+                .getElementById("loginPage")
+                .classList.add("hidden");
+
+            document
+                .getElementById("registerPage")
+                .classList.remove("hidden");
+
+            document
+                .getElementById("loginMessage")
+                .textContent = "";
+
+        });
+
+
+
+    // -------------------------
+    // กลับไปหน้า Login
+    // -------------------------
+
+    document
+        .getElementById("goLogin")
+        .addEventListener("click", function () {
+
+            document
+                .getElementById("registerPage")
+                .classList.add("hidden");
+
+            document
+                .getElementById("loginPage")
+                .classList.remove("hidden");
+
+            document
+                .getElementById("registerMessage")
+                .textContent = "";
+
+        });
+
+
+
+    // -------------------------
+    // สมัครสมาชิก
+    // -------------------------
+
+    document
+        .getElementById("registerButton")
+        .addEventListener("click", function () {
+
+            const username =
+                document
+                    .getElementById("registerUsername")
+                    .value
+                    .trim();
+
+
+            const password =
+                document
+                    .getElementById("registerPassword")
+                    .value;
+
+
+            const confirmPassword =
+                document
+                    .getElementById("registerConfirm")
+                    .value;
+
+
+            const message =
+                document
+                    .getElementById("registerMessage");
+
+
+            message.className = "message";
+
+
+            if (username === "" ||
+                password === "" ||
+                confirmPassword === "") {
+
+                message.textContent =
+                    "กรุณากรอกข้อมูลให้ครบ";
+
+                return;
+            }
+
+
+            if (username.length < 3) {
+
+                message.textContent =
+                    "ชื่อผู้ใช้ต้องมีอย่างน้อย 3 ตัวอักษร";
+
+                return;
+            }
+
+
+            if (password.length < 6) {
+
+                message.textContent =
+                    "รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร";
+
+                return;
+            }
+
+
+            if (password !== confirmPassword) {
+
+                message.textContent =
+                    "รหัสผ่านไม่ตรงกัน";
+
+                return;
+            }
+
+
+            const exists =
+                users.some(function (user) {
+
+                    return user.username === username;
+
+                });
+
+
+            if (exists) {
+
+                message.textContent =
+                    "ชื่อผู้ใช้นี้มีอยู่แล้ว";
+
+                return;
+            }
+
+
+            users.push({
+
+                username: username,
+
+                password: password
+
+            });
+
+
+            message.className =
+                "message success";
+
+
+            message.textContent =
+                "สมัครสมาชิกสำเร็จ 🎉";
+
+
+            document
+                .getElementById("registerUsername")
+                .value = "";
+
+            document
+                .getElementById("registerPassword")
+                .value = "";
+
+            document
+                .getElementById("registerConfirm")
+                .value = "";
+
+        });
+
+
+
+    // -------------------------
+    // Login
+    // -------------------------
+
+    document
+        .getElementById("loginButton")
+        .addEventListener("click", function () {
+
+            const username =
+                document
+                    .getElementById("loginUsername")
+                    .value
+                    .trim();
+
+
+            const password =
+                document
+                    .getElementById("loginPassword")
+                    .value;
+
+
+            const message =
+                document
+                    .getElementById("loginMessage");
+
+
+            message.className =
+                "message";
+
+
+            const user =
+                users.find(function (user) {
+
+                    return user.username === username &&
+                           user.password === password;
+
+                });
+
+
+            if (!user) {
+
+                message.textContent =
+                    "ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง";
+
+                return;
+            }
+
+
+            document
+                .getElementById("loginPage")
+                .classList.add("hidden");
+
+
+            document
+                .getElementById("mainPage")
+                .classList.remove("hidden");
+
+
+            document
+                .getElementById("loginUsername")
+                .value = "";
+
+            document
+                .getElementById("loginPassword")
+                .value = "";
+
+        });
+
+
+
+    // -------------------------
+    // ค้นหากิจกรรม
+    // -------------------------
+
+    document
+        .getElementById("searchButton")
+        .addEventListener("click", function () {
+
+            const keyword =
+                document
+                    .getElementById("search")
+                    .value
+                    .trim();
+
+
+            const results =
+                document
+                    .getElementById("results");
+
+
+            if (keyword === "") {
+
+                results.innerHTML =
+                    "<p>กรุณาพิมพ์ชื่อกิจกรรม</p>";
+
+                return;
+            }
+
+
+            results.innerHTML =
+                "<p>🔎 กำลังค้นหา: <b>"
+                + keyword
+                + "</b></p>";
+
+        });
+
+
+
+    // -------------------------
+    // Logout
+    // -------------------------
+
+    document
+        .getElementById("logoutButton")
+        .addEventListener("click", function () {
+
+            document
+                .getElementById("mainPage")
+                .classList.add("hidden");
+
+
+            document
+                .getElementById("loginPage")
+                .classList.remove("hidden");
+
+        });
+
+</script>
+
+
+</body>
+
+</html>

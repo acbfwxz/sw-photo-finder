@@ -1,746 +1,474 @@
 <!DOCTYPE html>
 <html lang="th">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>SW Photo Finder</title>
+  <title>SW Photo Finder</title>
 
-    <style>
-        * {
-            box-sizing: border-box;
-        }
+  <style>
+    * {
+      box-sizing: border-box;
+    }
 
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background: #f4f6f8;
-            color: #222;
-        }
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f5f5f5;
+      color: #222;
+    }
 
-        .container {
-            max-width: 450px;
-            margin: auto;
-            padding: 25px;
-        }
+    .container {
+      width: 90%;
+      max-width: 500px;
+      margin: 50px auto;
+      background: white;
+      padding: 25px;
+      border-radius: 20px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+    }
 
-        .box {
-            background: white;
-            padding: 25px;
-            border-radius: 18px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-            margin-top: 40px;
-        }
+    h1 {
+      text-align: center;
+      color: #d1007f;
+      margin-bottom: 10px;
+    }
 
-        h1 {
-            text-align: center;
-            margin-bottom: 10px;
-        }
+    .subtitle {
+      text-align: center;
+      color: #777;
+      margin-bottom: 25px;
+    }
 
-        .subtitle {
-            text-align: center;
-            color: #666;
-            margin-bottom: 25px;
-        }
+    input {
+      width: 100%;
+      padding: 13px;
+      margin: 8px 0;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      font-size: 16px;
+    }
 
-        input {
-            width: 100%;
-            padding: 13px;
-            margin-bottom: 12px;
-            border: 1px solid #ddd;
-            border-radius: 10px;
-            font-size: 16px;
-        }
+    button {
+      width: 100%;
+      padding: 13px;
+      margin-top: 10px;
+      border: none;
+      border-radius: 10px;
+      background: #d1007f;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+    }
 
-        button {
-            width: 100%;
-            padding: 13px;
-            border: none;
-            border-radius: 10px;
-            background: #222;
-            color: white;
-            font-size: 16px;
-            cursor: pointer;
-        }
+    button:hover {
+      opacity: 0.9;
+    }
 
-        button:active {
-            transform: scale(0.98);
-        }
+    .secondary {
+      background: #777;
+    }
 
-        button:disabled {
-            opacity: 0.6;
-        }
+    .link-btn {
+      background: none;
+      color: #d1007f;
+      margin-top: 5px;
+    }
 
-        .secondary {
-            background: #777;
-            margin-top: 10px;
-        }
+    .error {
+      color: red;
+      text-align: center;
+      margin-top: 10px;
+    }
 
-        .link {
-            text-align: center;
-            margin-top: 18px;
-            color: #3367d6;
-            cursor: pointer;
-        }
+    .success {
+      color: green;
+      text-align: center;
+      margin-top: 10px;
+    }
 
-        .hidden {
-            display: none;
-        }
+    #mainPage {
+      display: none;
+    }
 
-        .message {
-            text-align: center;
-            margin-top: 15px;
-            color: #d33;
-        }
-
-        .success {
-            color: green;
-        }
-
-        .search-box {
-            margin-top: 25px;
-        }
-
-        .logout {
-            margin-top: 20px;
-        }
-    </style>
-
+    #registerPage {
+      display: none;
+    }
+  </style>
 </head>
 
 <body>
 
-<div class="container">
+  <!-- LOGIN -->
+  <div class="container" id="loginPage">
 
-    <!-- LOGIN -->
-    <div id="loginPage" class="box">
+    <h1>📸 SW Photo Finder</h1>
 
-        <h1>🏫 SW Photo Finder</h1>
-
-        <p class="subtitle">
-            เข้าสู่ระบบเพื่อค้นหารูปกิจกรรม
-        </p>
-
-        <input
-            type="text"
-            id="loginUsername"
-            placeholder="ชื่อผู้ใช้"
-            autocomplete="username"
-        >
-
-        <input
-            type="password"
-            id="loginPassword"
-            placeholder="รหัสผ่าน"
-            autocomplete="current-password"
-        >
-
-        <button id="loginButton">
-            🔐 เข้าสู่ระบบ
-        </button>
-
-        <p class="link" id="goRegister">
-            ยังไม่มีบัญชี? สมัครสมาชิก
-        </p>
-
-        <p id="loginMessage" class="message"></p>
-
+    <div class="subtitle">
+      ค้นหารูปกิจกรรมโรงเรียน
     </div>
 
+    <input
+      type="text"
+      id="loginUsername"
+      placeholder="ชื่อผู้ใช้"
+    >
 
-    <!-- REGISTER -->
-    <div id="registerPage" class="box hidden">
+    <input
+      type="password"
+      id="loginPassword"
+      placeholder="รหัสผ่าน"
+    >
 
-        <h1>📝 สมัครสมาชิก</h1>
+    <button id="loginBtn">
+      เข้าสู่ระบบ
+    </button>
 
-        <p class="subtitle">
-            สร้างบัญชี SW Photo Finder
-        </p>
+    <button class="link-btn" id="showRegisterBtn">
+      สมัครสมาชิก
+    </button>
 
-        <input
-            type="text"
-            id="registerUsername"
-            placeholder="ชื่อผู้ใช้"
-            autocomplete="username"
-        >
+    <div class="error" id="loginError"></div>
 
-        <input
-            type="password"
-            id="registerPassword"
-            placeholder="รหัสผ่าน"
-            autocomplete="new-password"
-        >
+  </div>
 
-        <input
-            type="password"
-            id="registerConfirm"
-            placeholder="ยืนยันรหัสผ่าน"
-            autocomplete="new-password"
-        >
 
-        <button id="registerButton">
-            📝 สมัครสมาชิก
-        </button>
+  <!-- REGISTER -->
+  <div class="container" id="registerPage">
 
-        <button
-            class="secondary"
-            id="goLogin"
-        >
-            กลับไปเข้าสู่ระบบ
-        </button>
+    <h1>📝 สมัครสมาชิก</h1>
 
-        <p id="registerMessage" class="message"></p>
+    <input
+      type="text"
+      id="registerUsername"
+      placeholder="ชื่อผู้ใช้"
+    >
 
+    <input
+      type="password"
+      id="registerPassword"
+      placeholder="รหัสผ่าน"
+    >
+
+    <input
+      type="password"
+      id="registerConfirmPassword"
+      placeholder="ยืนยันรหัสผ่าน"
+    >
+
+    <button id="registerBtn">
+      สมัครสมาชิก
+    </button>
+
+    <button class="secondary" id="backLoginBtn">
+      กลับไปเข้าสู่ระบบ
+    </button>
+
+    <div class="error" id="registerError"></div>
+
+  </div>
+
+
+  <!-- MAIN -->
+  <div class="container" id="mainPage">
+
+    <h1>📸 SW Photo Finder</h1>
+
+    <div class="subtitle">
+      ค้นหารูปกิจกรรมของโรงเรียน
     </div>
 
+    <input
+      type="text"
+      id="searchInput"
+      placeholder="เช่น กีฬาสี 2568"
+    >
 
-    <!-- MAIN -->
-    <div id="mainPage" class="box hidden">
+    <button id="searchBtn">
+      🔎 ค้นหา
+    </button>
 
-        <h1>🏫 SW Photo Finder</h1>
+    <div id="searchResult"></div>
 
-        <p class="subtitle">
-            ค้นหารูปกิจกรรมโรงเรียน
-        </p>
+    <button class="secondary" id="logoutBtn">
+      ออกจากระบบ
+    </button>
 
-        <div class="search-box">
-
-            <input
-                type="text"
-                id="search"
-                placeholder="เช่น กีฬาสี 2569"
-            >
-
-            <button id="searchButton">
-                🔎 ค้นหา
-            </button>
-
-        </div>
-
-        <div id="results"></div>
-
-        <button
-            class="secondary logout"
-            id="logoutButton"
-        >
-            🚪 ออกจากระบบ
-        </button>
-
-    </div>
-
-</div>
+  </div>
 
 
-<!-- Firebase -->
-<script type="module">
+  <!-- FIREBASE -->
+  <script type="module">
 
     import {
-        initializeApp
+      initializeApp
     } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 
     import {
-        getAuth,
-        createUserWithEmailAndPassword,
-        signInWithEmailAndPassword,
-        onAuthStateChanged,
-        signOut,
-        setPersistence,
-        browserLocalPersistence
+      getAuth,
+      createUserWithEmailAndPassword,
+      signInWithEmailAndPassword,
+      onAuthStateChanged,
+      signOut,
+      setPersistence,
+      browserLocalPersistence
     } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
 
-    // =========================
-    // Firebase Config
-    // =========================
-
+    // Firebase configuration
     const firebaseConfig = {
-
-        apiKey: "AIzaSyBnXa3xAHIfIKLlYku8gH9nl8CXZ6I3QzA",
-
-        authDomain: "sw-photo-finder.firebaseapp.com",
-
-        projectId: "sw-photo-finder",
-
-        storageBucket: "sw-photo-finder.firebasestorage.app",
-
-        messagingSenderId: "247908189079",
-
-        appId: "1:247908189079:web:a8db298bad5c43cf717ad2",
-
-        measurementId: "G-RZJ44RSQXS"
-
+      apiKey: "AIzaSyBnXa3xAHIfIKlLyku8g9Hnl8CXZ6I3QzA",
+      authDomain: "sw-photo-finder.firebaseapp.com",
+      projectId: "sw-photo-finder",
+      storageBucket: "sw-photo-finder.firebasestorage.app",
+      messagingSenderId: "247908189079",
+      appId: "1:247908189079:web:a8db298bad5c43cf717ad2",
+      measurementId: "G-RZJ44RSQXS"
     };
 
 
-    // =========================
-    // เริ่ม Firebase
-    // =========================
-
+    // Initialize Firebase
     const app = initializeApp(firebaseConfig);
-
     const auth = getAuth(app);
 
 
-    // =========================
-    // ให้จำสถานะ Login
-    // =========================
-
-    const persistenceReady = setPersistence(
-        auth,
-        browserLocalPersistence
-    );
+    // ให้ Login ค้างไว้แม้ปิด Chrome
+    const persistenceReady =
+      setPersistence(auth, browserLocalPersistence);
 
 
-    // =========================
-    // Username → Email
-    // =========================
-
+    // แปลง username เป็น email ภายใน
     function usernameToEmail(username) {
-
-        return username
-            .trim()
-            .toLowerCase()
-            + "@swphotofinder.local";
-
+      return username.trim().toLowerCase()
+        + "@swphotofinder.local";
     }
 
 
-    // =========================
-    // แสดง Login
-    // =========================
+    // หน้า
+    const loginPage =
+      document.getElementById("loginPage");
 
-    function showLogin() {
+    const registerPage =
+      document.getElementById("registerPage");
 
-        document
-            .getElementById("loginPage")
-            .classList.remove("hidden");
-
-        document
-            .getElementById("registerPage")
-            .classList.add("hidden");
-
-        document
-            .getElementById("mainPage")
-            .classList.add("hidden");
-
-    }
+    const mainPage =
+      document.getElementById("mainPage");
 
 
-    // =========================
-    // แสดง Register
-    // =========================
+    // ปุ่มเปลี่ยนไปสมัครสมาชิก
+    document.getElementById("showRegisterBtn")
+      .addEventListener("click", () => {
 
-    function showRegister() {
+        loginPage.style.display = "none";
+        registerPage.style.display = "block";
 
-        document
-            .getElementById("loginPage")
-            .classList.add("hidden");
-
-        document
-            .getElementById("registerPage")
-            .classList.remove("hidden");
-
-        document
-            .getElementById("mainPage")
-            .classList.add("hidden");
-
-    }
+      });
 
 
-    // =========================
-    // แสดง Main
-    // =========================
+    // ปุ่มกลับหน้า Login
+    document.getElementById("backLoginBtn")
+      .addEventListener("click", () => {
 
-    function showMain() {
+        registerPage.style.display = "none";
+        loginPage.style.display = "block";
 
-        document
-            .getElementById("loginPage")
-            .classList.add("hidden");
-
-        document
-            .getElementById("registerPage")
-            .classList.add("hidden");
-
-        document
-            .getElementById("mainPage")
-            .classList.remove("hidden");
-
-    }
+      });
 
 
-    // =========================
-    // ไปสมัครสมาชิก
-    // =========================
-
-    document
-        .getElementById("goRegister")
-        .addEventListener("click", function () {
-
-            showRegister();
-
-            document
-                .getElementById("loginMessage")
-                .textContent = "";
-
-        });
-
-
-    // =========================
-    // กลับ Login
-    // =========================
-
-    document
-        .getElementById("goLogin")
-        .addEventListener("click", function () {
-
-            showLogin();
-
-            document
-                .getElementById("registerMessage")
-                .textContent = "";
-
-        });
-
-
-    // =========================
     // สมัครสมาชิก
-    // =========================
+    document.getElementById("registerBtn")
+      .addEventListener("click", async () => {
 
-    document
-        .getElementById("registerButton")
-        .addEventListener("click", async function () {
+        const username =
+          document.getElementById("registerUsername")
+            .value.trim();
 
-            const username =
-                document
-                    .getElementById("registerUsername")
-                    .value
-                    .trim();
+        const password =
+          document.getElementById("registerPassword")
+            .value;
 
-            const password =
-                document
-                    .getElementById("registerPassword")
-                    .value;
+        const confirmPassword =
+          document.getElementById("registerConfirmPassword")
+            .value;
 
-            const confirmPassword =
-                document
-                    .getElementById("registerConfirm")
-                    .value;
+        const error =
+          document.getElementById("registerError");
 
-            const message =
-                document
-                    .getElementById("registerMessage");
 
-            message.className = "message";
+        error.textContent = "";
 
 
-            if (
-                username === "" ||
-                password === "" ||
-                confirmPassword === ""
-            ) {
+        if (!username || !password || !confirmPassword) {
+          error.textContent =
+            "กรุณากรอกข้อมูลให้ครบ";
+          return;
+        }
 
-                message.textContent =
-                    "กรุณากรอกข้อมูลให้ครบ";
 
-                return;
-            }
+        if (password.length < 6) {
+          error.textContent =
+            "รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร";
+          return;
+        }
 
 
-            if (username.length < 3) {
+        if (password !== confirmPassword) {
+          error.textContent =
+            "รหัสผ่านไม่ตรงกัน";
+          return;
+        }
 
-                message.textContent =
-                    "ชื่อผู้ใช้ต้องมีอย่างน้อย 3 ตัวอักษร";
 
-                return;
-            }
+        try {
 
+          await persistenceReady;
 
-            if (username.length > 30) {
+          await createUserWithEmailAndPassword(
+            auth,
+            usernameToEmail(username),
+            password
+          );
 
-                message.textContent =
-                    "ชื่อผู้ใช้ยาวเกินไป";
+        } catch (err) {
 
-                return;
-            }
+          console.error(err);
 
-
-            if (!/^[a-zA-Z0-9._-]+$/.test(username)) {
-
-                message.textContent =
-                    "ชื่อผู้ใช้ใช้ได้เฉพาะ A-Z, a-z, 0-9, . _ -";
-
-                return;
-            }
-
-
-            if (password.length < 6) {
-
-                message.textContent =
-                    "รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร";
-
-                return;
-            }
-
-
-            if (password !== confirmPassword) {
-
-                message.textContent =
-                    "รหัสผ่านไม่ตรงกัน";
-
-                return;
-            }
-
-
-            const email =
-                usernameToEmail(username);
-
-
-            try {
-
-                await persistenceReady;
-
-                await createUserWithEmailAndPassword(
-                    auth,
-                    email,
-                    password
-                );
-
-
-                message.className =
-                    "message success";
-
-                message.textContent =
-                    "สมัครสมาชิกสำเร็จ 🎉";
-
-
-                document
-                    .getElementById("registerUsername")
-                    .value = "";
-
-                document
-                    .getElementById("registerPassword")
-                    .value = "";
-
-                document
-                    .getElementById("registerConfirm")
-                    .value = "";
-
-
-            } catch (error) {
-
-                console.error(
-                    "Register error:",
-                    error
-                );
-
-
-                if (
-                    error.code ===
-                    "auth/email-already-in-use"
-                ) {
-
-                    message.textContent =
-                        "ชื่อผู้ใช้นี้มีอยู่แล้ว";
-
-                } else {
-
-                    message.textContent =
-                        "สมัครสมาชิกไม่สำเร็จ: "
-                        + error.code;
-
-                }
-
-            }
-
-        });
-
-
-    // =========================
-    // Login
-    // =========================
-
-    document
-        .getElementById("loginButton")
-        .addEventListener("click", async function () {
-
-            const username =
-                document
-                    .getElementById("loginUsername")
-                    .value
-                    .trim();
-
-            const password =
-                document
-                    .getElementById("loginPassword")
-                    .value;
-
-            const message =
-                document
-                    .getElementById("loginMessage");
-
-            message.className = "message";
-
-
-            if (
-                username === "" ||
-                password === ""
-            ) {
-
-                message.textContent =
-                    "กรุณากรอกชื่อผู้ใช้และรหัสผ่าน";
-
-                return;
-            }
-
-
-            const email =
-                usernameToEmail(username);
-
-
-            try {
-
-                await persistenceReady;
-
-                await signInWithEmailAndPassword(
-                    auth,
-                    email,
-                    password
-                );
-
-                message.textContent = "";
-
-
-            } catch (error) {
-
-                console.error(
-                    "Login error:",
-                    error
-                );
-
-
-                if (
-                    error.code ===
-                    "auth/invalid-credential"
-                ) {
-
-                    message.textContent =
-                        "ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง";
-
-                } else if (
-                    error.code ===
-                    "auth/user-not-found"
-                ) {
-
-                    message.textContent =
-                        "ไม่พบบัญชีนี้";
-
-                } else if (
-                    error.code ===
-                    "auth/wrong-password"
-                ) {
-
-                    message.textContent =
-                        "รหัสผ่านไม่ถูกต้อง";
-
-                } else {
-
-                    message.textContent =
-                        "เข้าสู่ระบบไม่สำเร็จ: "
-                        + error.code;
-
-                }
-
-            }
-
-        });
-
-
-    // =========================
-    // ตรวจสอบสถานะ Login
-    // =========================
-
-    onAuthStateChanged(
-        auth,
-        function (user) {
-
-            if (user) {
-
-                showMain();
-
-            } else {
-
-                showLogin();
-
-            }
+          if (err.code === "auth/email-already-in-use") {
+            error.textContent =
+              "ชื่อผู้ใช้นี้ถูกใช้แล้ว";
+          }
+          else if (err.code === "auth/invalid-api-key") {
+            error.textContent =
+              "API Key ของ Firebase ไม่ถูกต้อง";
+          }
+          else {
+            error.textContent =
+              "สมัครสมาชิกไม่สำเร็จ: " + err.message;
+          }
 
         }
-    );
+
+      });
 
 
-    // =========================
-    // ค้นหากิจกรรม
-    // =========================
+    // Login
+    document.getElementById("loginBtn")
+      .addEventListener("click", async () => {
 
-    document
-        .getElementById("searchButton")
-        .addEventListener("click", function () {
+        const username =
+          document.getElementById("loginUsername")
+            .value.trim();
 
-            const keyword =
-                document
-                    .getElementById("search")
-                    .value
-                    .trim();
+        const password =
+          document.getElementById("loginPassword")
+            .value;
 
-            const results =
-                document
-                    .getElementById("results");
+        const error =
+          document.getElementById("loginError");
 
 
-            if (keyword === "") {
-
-                results.innerHTML =
-                    "<p>กรุณาพิมพ์ชื่อกิจกรรม</p>";
-
-                return;
-            }
+        error.textContent = "";
 
 
-            results.innerHTML =
-                "<p>🔎 กำลังค้นหา: <b>"
-                + keyword
-                + "</b></p>";
+        if (!username || !password) {
+          error.textContent =
+            "กรุณากรอกชื่อผู้ใช้และรหัสผ่าน";
+          return;
+        }
 
-        });
+
+        try {
+
+          await persistenceReady;
+
+          await signInWithEmailAndPassword(
+            auth,
+            usernameToEmail(username),
+            password
+          );
+
+        } catch (err) {
+
+          console.error(err);
+
+          if (
+            err.code === "auth/invalid-credential" ||
+            err.code === "auth/wrong-password" ||
+            err.code === "auth/user-not-found"
+          ) {
+            error.textContent =
+              "ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง";
+          }
+          else if (err.code === "auth/invalid-api-key") {
+            error.textContent =
+              "API Key ของ Firebase ไม่ถูกต้อง";
+          }
+          else {
+            error.textContent =
+              "เข้าสู่ระบบไม่สำเร็จ: " + err.message;
+          }
+
+        }
+
+      });
 
 
-    // =========================
     // Logout
-    // =========================
+    document.getElementById("logoutBtn")
+      .addEventListener("click", async () => {
 
-    document
-        .getElementById("logoutButton")
-        .addEventListener(
-            "click",
-            async function () {
+        await signOut(auth);
 
-                try {
+      });
 
-                    await signOut(auth);
 
-                } catch (error) {
+    // ค้นหา
+    document.getElementById("searchBtn")
+      .addEventListener("click", () => {
 
-                    console.error(
-                        "Logout error:",
-                        error
-                    );
+        const keyword =
+          document.getElementById("searchInput")
+            .value.trim();
 
-                }
+        const result =
+          document.getElementById("searchResult");
 
-            }
-        );
 
-</script>
+        if (!keyword) {
+          result.innerHTML =
+            "<p>กรุณาพิมพ์สิ่งที่ต้องการค้นหา</p>";
+          return;
+        }
+
+
+        result.innerHTML =
+          "<p>🔎 กำลังค้นหา: " +
+          keyword +
+          "</p>";
+
+      });
+
+
+    // ตรวจสอบสถานะ Login
+    onAuthStateChanged(auth, (user) => {
+
+      if (user) {
+
+        loginPage.style.display = "none";
+        registerPage.style.display = "none";
+        mainPage.style.display = "block";
+
+      } else {
+
+        loginPage.style.display = "block";
+        registerPage.style.display = "none";
+        mainPage.style.display = "none";
+
+      }
+
+    });
+
+  </script>
 
 </body>
 </html>
